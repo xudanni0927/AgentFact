@@ -2,9 +2,10 @@
 
 Official repository for the paper:
 
-** Multimodal Fact-Checking: An Agent-based Approach**
-** RW-Post & AgentFact **
+* Multimodal Fact-Checking: An Agent-based Approach *
+* RW-Post & AgentFact *
+
 🚧 Code will be released soon.
 
 Please refer to the paper for method details.
->>>>>>> Initial commit: project placeholder
+
