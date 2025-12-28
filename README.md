@@ -2,7 +2,7 @@
 
 Official repository for the paper:
 
-** Multimodal Fact-Checking: An Agent-based Approach **
+**Multimodal Fact-Checking: An Agent-based Approach**
 
 🚧 Code will be released soon.
 
