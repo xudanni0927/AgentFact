@@ -10,7 +10,11 @@ Official repository for the paper:
 
 The RW_Post dataset has been uploaded.
 
-Please refer to `dataset_instruction.md` for usage instructions.
+#### Terms of Use
+
+By accessing or using this dataset, you agree to comply with the terms described in [DATA_LICENSE.md](DATA_LICENSE.md).
+
+Please refer to [dataset_instruction.md](dataset_instruction.md) for usage instructions.
 
 The repository includes textual data such as:
 - `CLAIM`
