@@ -62,6 +62,4 @@ This dataset is designed for research on:
 
 ## License and Usage
 
-Please ensure compliance with original data sources (e.g., fact-checking websites). The dataset is intended for research purposes only.
-
-
+Please ensure compliance with original data sources (i.e., Snopes websites). The dataset is intended for research purposes only.
