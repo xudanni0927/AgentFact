@@ -29,12 +29,14 @@ Users may not use this dataset for:
 
 If you use this dataset in research, please cite:
 
+```bibtex
 @article{xu2025multimodal,
   title={Multimodal Fact-Checking: An Agent-based Approach},
   author={Xu, Danni and Fan, Shaojing and Cheng, Harry and Kankanhalli, Mohan},
   journal={arXiv preprint arXiv:2512.22933},
   year={2025}
 }
+```
 
 ## Disclaimer
 
