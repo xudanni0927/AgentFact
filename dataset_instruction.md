@@ -44,13 +44,11 @@ RW-Post supports multiple evaluation settings:
 - Evidence-bounded: Besides claim and post context, using provided ground-truth evidence
 - Open-web: Besides claim and post context, retrieving external evidence 
   
+## Notes on Data Leakage
 To prevent label leakage in the open-web setting, users should:
 (1) restrict retrieval to information published before the claim time (using the field `claim_time`), and  
-(2) avoid retrieving content from fact-checking websites (e.g., Snopes, PolitiFact, FactCheck.org), which may directly reveal the ground-truth label.
+(2) avoid retrieving content from fact-checking websites (e.g., Snopes, PolitiFact, FactCheck.org), which may directly reveal the ground-truth label. Use [is_fact_check.py](./is_fact_check.py) to check whether a given evidence URL is from a fact-checking website.
 
-## Notes on Data Leakage
-
-The field "claim_time" is provided to help prevent temporal leakage when retrieving external evidence. Users should ensure that retrieved evidence does not include information published after the claim time.
 
 ## Intended Use
 
