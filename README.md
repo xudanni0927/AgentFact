@@ -21,8 +21,7 @@ The repository includes textual data such as:
 - `POST_TEXT`
 - `IMAGE_LINK`
 
-The complete dataset, including post images, is available on Google Drive 📎 https://drive.google.com/file/d/1jxcPoygWNjcNZg8yqEYnOwBUusVOkqS_/view?usp=sharing 
-
+The complete dataset, including post images, is available on Google Drive 📎 https://drive.google.com/file/d/1bo4zyrJX_3iLziMqVL5z_urqQ2pddr3k/view?usp=sharing 
 and IEEE DataPort: 📎 https://dx.doi.org/10.21227/vasq-rf11
 
 ## 🚧 Code Release
