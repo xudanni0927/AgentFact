@@ -2,9 +2,9 @@
 
 Official repository for the paper:
 
-**Multimodal Fact-Checking: An Agent-based Approach**
+**RW-Post: Auditable Evidence-Grounded Multimodal Fact-Checking in the Wild**
 
-[Multimodal Fact-Checking: An Agent-based Approach](https://arxiv.org/abs/2512.22933) — please refer to the paper for detailed methodology and experimental settings.
+Published at the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops, 2026 — please refer to the paper for detailed methodology and experimental settings (see [Citation](#citation) below).
 
 A multi-agent, LLM-based framework for multimodal misinformation fact-checking. Given a social media post (text + image) and its claim, AgentFact plans a verification strategy, gathers text/image evidence, judges source credibility, and produces an explainable veracity verdict with evidence-ID citations.
 
@@ -157,6 +157,21 @@ Results are written to `output/<dataset>/<mode_name>/<search_mode>/<start_id>/<m
 - `readable_json/<claim_id>.json` — a pretty-printed copy of each successful record.
 
 Runs are resumable: `news_url`s already present in `output.jsonl` are skipped on the next run of the same command.
+
+## Citation
+
+If you use AgentFact or the RW-Post dataset in your research, please cite:
+
+```bibtex
+@InProceedings{Xu_2026_CVPR,
+    author    = {Xu, Danni and Fan, Shaojing and Cheng, Harry and Kankanhalli, Mohan},
+    title     = {RW-Post: Auditable Evidence-Grounded Multimodal Fact-Checking in the Wild},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+    month     = {June},
+    year      = {2026},
+    pages     = {10964-10973}
+}
+```
 
 ## License
 
