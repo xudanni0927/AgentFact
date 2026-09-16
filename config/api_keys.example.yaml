@@ -1,0 +1,13 @@
+# Copy this file to config/api_keys.yaml and fill in your own keys.
+# config/api_keys.yaml is gitignored, so real values never get committed.
+# Used by search/serper.py (the default web-search backend) via config/globals.py.
+
+serper_api_key: ''
+openai_api_key: ''
+deepseek_api_key: ''
+huggingface_user_access_token: ''
+
+# Only needed if you use the optional Bluesky search/retrieval features.
+# Prefer an app password (not your main account password) if Bluesky supports one.
+bluesky_username: ''
+bluesky_password: ''

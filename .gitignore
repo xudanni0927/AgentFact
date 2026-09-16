@@ -1,0 +1,60 @@
+# Local code backups
+code_backup_*/
+
+# Unpublished paper submission — never open-source this
+2026_TMM_RW_Post_submission_version/
+2026_TMM_RW_Post_submission_version.pdf
+
+# Secrets / credentials
+.env
+config/api_keys.yaml
+config/google_service_account_key.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor / OS
+.vscode/
+.DS_Store
+
+# Large / generated data (only Dataset_RW-Post/demo/ ships with the repo)
+dataset_rw_post.zip
+Dataset_RW-Post/*.jsonl
+Dataset_RW-Post/*.csv
+Dataset_RW-Post/post_images/
+!Dataset_RW-Post/demo/
+Dataset_RW-Post/demo/*_imagefiltered.jsonl
+data/cache/
+temp/
+
+# Run outputs
+output/
+
+# Baseline LVLM comparison code/results — not part of this open-source release
+baseline_lvlms/
+
+# Prompt files not referenced by any active code (leftovers from other
+# frameworks/experiments, e.g. LEMMA baseline, baseline_lvlms comparisons)
+prompts/cheat_filter.md
+prompts/evidence_extraction_bak.md
+prompts/external_knowledge.md
+prompts/lemma_direct.md
+prompts/question_gen.md
+prompts/refined_prediction.md
+prompts/topic_query_relevance_filter.md
+prompts/topic_relevance_filter.md
+prompts/baselines/
+prompts/definition.json
+
+# Unused config leftover from inherited DEFAME framework config
+config/available_models.csv
+
+# Internal dataset-construction/QA tooling — depends on raw dataset files
+# not included in this repo; not part of the AgentFact pipeline itself
+Dataset_RW-Post/data_publish_version.py
+Dataset_RW-Post/evidence_select_for_review.py
+Dataset_RW-Post/merge_evidence.py
+Dataset_RW-Post/data_statistic.ipynb
+Dataset_RW-Post/证据人工审查.md

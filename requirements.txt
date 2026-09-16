@@ -1,0 +1,10 @@
+openai
+python-dotenv
+pyyaml
+requests
+beautifulsoup4
+newspaper3k
+opencv-python
+Pillow
+google-cloud-vision
+ezmm
