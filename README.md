@@ -14,7 +14,7 @@ A multi-agent, LLM-based framework for multimodal misinformation fact-checking. 
 
 ### RW_Post Dataset Released
 
-The RW_Post dataset has been uploaded. The non-image portion (claims, post text, evidence, labels) is included in this repo under `RW_Post_dataset/`. A small self-contained demo sample with images also ships under `Dataset_RW-Post/demo/` so you can smoke-test the pipeline right away.
+The RW_Post dataset has been uploaded. The non-image portion (claims, post text, evidence, labels) is included in this repo under `RW_Post_dataset/`. A small self-contained demo sample with images also ships under `RW_Post_dataset/demo/` so you can smoke-test the pipeline right away.
 
 The complete dataset, including post images, is available on:
 - Google Drive 📎 https://drive.google.com/file/d/1bo4zyrJX_3iLziMqVL5z_urqQ2pddr3k/view?usp=sharing
@@ -82,7 +82,7 @@ run_dev.sh              Shell-script variant of the same batching idea.
 
 RW_Post_dataset/        Non-image portion of the RW_Post dataset (see
                         "Updates" above for the full dataset with images).
-Dataset_RW-Post/demo/   A small self-contained sample (5 labeled posts +
+RW_Post_dataset/demo/   A small self-contained sample (5 labeled posts +
                         images) for smoke-testing the pipeline.
 dataset_instruction.md  Dataset schema and recommended evaluation settings.
 ```
@@ -133,17 +133,17 @@ search_mode = "open_book"  # "open_web" or "close_book" or "open_book"
 
 ## Running the demo
 
-A small self-contained sample (5 labeled posts + images) ships in `Dataset_RW-Post/demo/demo.jsonl` so you can smoke-test the pipeline without downloading the full dataset:
+A small self-contained sample (5 labeled posts + images) ships in `RW_Post_dataset/demo/demo.jsonl` so you can smoke-test the pipeline without downloading the full dataset:
 
 ```bash
-python main_workflow.py --input_file Dataset_RW-Post/demo/demo.jsonl --dataset rwpost
+python main_workflow.py --input_file RW_Post_dataset/demo/demo.jsonl --dataset rwpost
 ```
 
 CLI arguments:
 
 | Flag | Default | Meaning |
 |---|---|---|
-| `--input_file` | `Dataset_RW-Post/demo/demo.jsonl` | Path to a ground-truth JSONL file |
+| `--input_file` | `RW_Post_dataset/demo/demo.jsonl` | Path to a ground-truth JSONL file |
 | `--dataset` | `rwpost` | Dataset name tag, used only for the output path |
 | `--start_id` | `0` | Index of the first claim to process |
 | `--end_id` | `-1` | Index to stop before (`-1` = process all remaining claims) |

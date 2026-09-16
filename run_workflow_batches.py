@@ -2,7 +2,7 @@ import subprocess
 from concurrent.futures import ThreadPoolExecutor
 
 script = "main_workflow.py"
-input_file = "Dataset_RW-Post/demo/demo.jsonl"  # replace with your full dataset path for real runs
+input_file = "RW_Post_dataset/demo/demo.jsonl"  # replace with your full dataset path for real runs
 dataset = "rwpost"
 
 batch_size = 100

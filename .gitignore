@@ -19,13 +19,11 @@ __pycache__/
 .vscode/
 .DS_Store
 
-# Large / generated data (only Dataset_RW-Post/demo/ ships with the repo)
+# Large / generated data — the full local dataset working copy is not
+# part of this open-source release (see RW_Post_dataset/ for what ships)
 dataset_rw_post.zip
-Dataset_RW-Post/*.jsonl
-Dataset_RW-Post/*.csv
-Dataset_RW-Post/post_images/
-!Dataset_RW-Post/demo/
-Dataset_RW-Post/demo/*_imagefiltered.jsonl
+Dataset_RW-Post/
+RW_Post_dataset/demo/*_imagefiltered.jsonl
 data/cache/
 temp/
 
@@ -50,11 +48,3 @@ prompts/definition.json
 
 # Unused config leftover from inherited DEFAME framework config
 config/available_models.csv
-
-# Internal dataset-construction/QA tooling — depends on raw dataset files
-# not included in this repo; not part of the AgentFact pipeline itself
-Dataset_RW-Post/data_publish_version.py
-Dataset_RW-Post/evidence_select_for_review.py
-Dataset_RW-Post/merge_evidence.py
-Dataset_RW-Post/data_statistic.ipynb
-Dataset_RW-Post/证据人工审查.md

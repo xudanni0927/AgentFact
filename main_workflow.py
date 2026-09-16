@@ -26,7 +26,7 @@ from agent_utils import extract_link, safe_parse_updated_answer, extract_never_u
 parser = argparse.ArgumentParser(description="Run reasoning/evidence/image search batches with variable start_id")
 parser.add_argument("--start_id", type=int, required=False, default=0, help="Starting index for batch processing")
 parser.add_argument("--end_id", type=int, required=False, default=-1, help="Ending index for batch processing")
-parser.add_argument("--input_file", type=str, required=False, default="Dataset_RW-Post/demo/demo.jsonl", help="the path to input jsonl")
+parser.add_argument("--input_file", type=str, required=False, default="RW_Post_dataset/demo/demo.jsonl", help="the path to input jsonl")
 parser.add_argument("--dataset", type=str, required=False, default="rwpost", help="the name of input dataset")
 args = parser.parse_args()
 start_id = args.start_id

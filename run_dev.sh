@@ -6,7 +6,7 @@
 SCRIPT="main_workflow.py"
 PYTHON_PATH="python"
 MAX_PARALLEL=16
-INPUT_FILE="Dataset_RW-Post/demo/demo.jsonl"
+INPUT_FILE="RW_Post_dataset/demo/demo.jsonl"
 DATASET="rwpost"
 BATCH_SIZE=20
 TOTAL=$(wc -l < "$INPUT_FILE")
