@@ -106,13 +106,13 @@ The pipeline needs an OpenAI key and a web-search backend key. Two independent c
    cp config/api_keys.example.yaml config/api_keys.yaml
    # then fill in serper_api_key (and openai_api_key if you rely on this path instead)
    ```
-   If you leave this file blank, [config/globals.py](config/globals.py) will prompt you for each key interactively on first run and save it back to this file.
+   Get a Serper API key at **[serper.dev](https://serper.dev/)** (free tier available). If you leave this file blank, [config/globals.py](config/globals.py) will prompt you for each key interactively on first run and save it back to this file.
 
 Both `.env` and `config/api_keys.yaml` are gitignored — never commit real keys.
 
 ### Reverse image search (optional)
 
-If you use the Google Vision-based image search, place your GCP service account credentials at `config/google_service_account_key.json` (also gitignored), and make sure both **billing** and the **Cloud Vision API** are enabled on that GCP project.
+If you use the Google Vision-based image search, place your GCP service account credentials at `config/google_service_account_key.json` (also gitignored), and make sure both **billing** and the **[Cloud Vision API](https://console.cloud.google.com/apis/library/vision.googleapis.com)** are enabled on that GCP project. See Google's [Vision API setup guide](https://cloud.google.com/vision/docs/setup) for creating a project, enabling billing, and generating a service account key.
 
 ## Search modes
 
