@@ -1,6 +1,34 @@
 # AgentFact
 
+Official repository for the paper:
+
+**Multimodal Fact-Checking: An Agent-based Approach**
+
+[Multimodal Fact-Checking: An Agent-based Approach](https://arxiv.org/abs/2512.22933) — please refer to the paper for detailed methodology and experimental settings.
+
 A multi-agent, LLM-based framework for multimodal misinformation fact-checking. Given a social media post (text + image) and its claim, AgentFact plans a verification strategy, gathers text/image evidence, judges source credibility, and produces an explainable veracity verdict with evidence-ID citations.
+
+## 📢 Updates
+
+### RW_Post Dataset Released
+
+The RW_Post dataset has been uploaded. The non-image portion (claims, post text, evidence, labels) is included in this repo under `RW_Post_dataset/`. A small self-contained demo sample with images also ships under `Dataset_RW-Post/demo/` so you can smoke-test the pipeline right away.
+
+The complete dataset, including post images, is available on:
+- Google Drive 📎 https://drive.google.com/file/d/1bo4zyrJX_3iLziMqVL5z_urqQ2pddr3k/view?usp=sharing
+- IEEE DataPort 📎 https://dx.doi.org/10.21227/vasq-rf11
+
+#### Terms of Use
+
+By accessing or using this dataset, you agree to comply with the terms described in [DATA_LICENSE.md](DATA_LICENSE.md).
+
+Please refer to [dataset_instruction.md](dataset_instruction.md) for the data schema and recommended evaluation settings (closed-book / evidence-bounded / open-web).
+
+### Code Released
+
+The AgentFact pipeline code is now available — see below for the code structure and how to run it.
+
+## Agents
 
 The pipeline is organized around five cooperating agents:
 
@@ -46,14 +74,15 @@ prompts/
   evidence_extraction.md LLM prompt used by evidence_extraction() to filter/
                          summarize scraped webpage text down to what's
                          relevant to a given query.
-Dataset_RW-Post/
-  dataset_instruction.md Schema and recommended evaluation settings for the
-                         full RW-Post dataset (released separately).
-  demo/                  A small self-contained sample (5 labeled posts +
-                         images) for smoke-testing the pipeline.
 run_workflow_batches.py Fans main_workflow.py out across parallel batches
                         for large runs.
 run_dev.sh              Shell-script variant of the same batching idea.
+
+RW_Post_dataset/        Non-image portion of the RW_Post dataset (see
+                        "Updates" above for the full dataset with images).
+Dataset_RW-Post/demo/   A small self-contained sample (5 labeled posts +
+                        images) for smoke-testing the pipeline.
+dataset_instruction.md  Dataset schema and recommended evaluation settings.
 ```
 
 ## Setup
@@ -129,10 +158,8 @@ Results are written to `output/<dataset>/<mode_name>/<search_mode>/<start_id>/<m
 
 Runs are resumable: `news_url`s already present in `output.jsonl` are skipped on the next run of the same command.
 
-## Dataset
-
-This repo ships only a minimal demo sample. The full **RW-Post** dataset (real-world social media posts with aligned image-text content, fact-checking evidence, and reasoning traces) is released separately — see [Dataset_RW-Post/dataset_instruction.md](Dataset_RW-Post/dataset_instruction.md) for the data schema and recommended evaluation settings (closed-book / evidence-bounded / open-web).
-
 ## License
 
-MIT — see [LICENSE](LICENSE).
+The **code** in this repository is released under the MIT License — see [LICENSE](LICENSE).
+
+The **RW_Post dataset** is released separately under the terms in [DATA_LICENSE.md](DATA_LICENSE.md).
