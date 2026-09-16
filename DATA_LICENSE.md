@@ -30,11 +30,13 @@ Users may not use this dataset for:
 If you use this dataset in research, please cite:
 
 ```bibtex
-@article{xu2025multimodal,
-  title={Multimodal Fact-Checking: An Agent-based Approach},
-  author={Xu, Danni and Fan, Shaojing and Cheng, Harry and Kankanhalli, Mohan},
-  journal={arXiv preprint arXiv:2512.22933},
-  year={2025}
+@InProceedings{Xu_2026_CVPR,
+    author    = {Xu, Danni and Fan, Shaojing and Cheng, Harry and Kankanhalli, Mohan},
+    title     = {RW-Post: Auditable Evidence-Grounded Multimodal Fact-Checking in the Wild},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+    month     = {June},
+    year      = {2026},
+    pages     = {10964-10973}
 }
 ```
 
