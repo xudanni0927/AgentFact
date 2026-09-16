@@ -6,6 +6,8 @@ Official repository for the paper:
 
 Published at the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops, 2026 — please refer to the paper for detailed methodology and experimental settings (see [Citation](#citation) below).
 
+> An earlier preprint of this work circulated under the title *"Multimodal Fact-Checking: An Agent-based Approach"* ([arXiv:2512.22933](https://arxiv.org/abs/2512.22933)). The content is largely the same; please cite the published CVPR Workshops version above.
+
 A multi-agent, LLM-based framework for multimodal misinformation fact-checking. Given a social media post (text + image) and its claim, AgentFact plans a verification strategy, gathers text/image evidence, judges source credibility, and produces an explainable veracity verdict with evidence-ID citations.
 
 ## 📢 Updates
