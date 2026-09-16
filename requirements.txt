@@ -4,7 +4,9 @@ pyyaml
 requests
 beautifulsoup4
 newspaper3k
+lxml_html_clean
 opencv-python
 Pillow
 google-cloud-vision
 ezmm
+markdown
