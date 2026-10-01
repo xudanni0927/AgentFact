@@ -1,6 +1,12 @@
 # Local code backups
 code_backup_*/
 
+# Packaging artifacts for sharing baseline_lvlms/ outside git — not source
+baseline_lvlms_framework.tar.gz
+baseline_lvlms_old_version.tar.gz
+baseline_lvlms_old_version/
+baseline_lvlms_framework_preview/
+
 # Unpublished paper submission — never open-source this
 2026_TMM_RW_Post_submission_version/
 2026_TMM_RW_Post_submission_version.pdf
@@ -30,8 +36,25 @@ temp/
 # Run outputs
 output/
 
-# Baseline LVLM comparison code/results — not part of this open-source release
-baseline_lvlms/
+# Baseline LVLM comparison framework (baseline_lvlms/): ship the T/T+I/T+E/T+I+E
+# evaluation code, exclude everything else — run outputs, logs, generated
+# figures, the pre-this-framework trial-era scripts/results, and an unrelated
+# leftover QWen/ directory (not referenced by any code).
+baseline_lvlms/*
+!baseline_lvlms/README.md
+!baseline_lvlms/run_baseline_eval.py
+!baseline_lvlms/analyze_evidence_ratio.py
+!baseline_lvlms/plot_ablation_figures.py
+!baseline_lvlms/run_gpt4o_mini.sh
+!baseline_lvlms/run_gemini_flash.sh
+!baseline_lvlms/run_qwen3_vl.sh
+!baseline_lvlms/run_internvl35.sh
+!baseline_lvlms/run_gpt4o_mini_evidence_ablation.sh
+!baseline_lvlms/run_qwen3_vl_ti.sh
+!baseline_lvlms/run_internvl35_ti.sh
+!baseline_lvlms/run_gemini_flash_ti.sh
+!baseline_lvlms/models/
+!baseline_lvlms/prompts/
 
 # Prompt files not referenced by any active code (leftovers from other
 # frameworks/experiments, e.g. LEMMA baseline, baseline_lvlms comparisons)
