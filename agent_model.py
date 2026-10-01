@@ -408,7 +408,7 @@ def call_Middle_Reasoner(image_analysis_result, context, post):
 # 第4步：证据支撑核查）。先复述claim("my_understanding_of_claim")避免推理
 # 跑偏，再逐步推理所有累积证据，输出信息充分度置信分数(1-5)。
 # ---------------------------------------------------------------------
-def call_Middle_Reasoner_with_Source_Judgment(image_analysis_result, context, post):
+def call_Middle_Reasoner_with_Source_Judgment(image_analysis_result, context, post, with_image=False):
     print("*Step* Middle_Reasoner")
     prompt_task= """You are an AI expert in fact-checking and claim verification. Your task is to analyze a given claim and determine its authenticity based on a structured reasoning process. You must strictly follow the provided reasoning logic and return the results in JSON format.
     ---
@@ -541,6 +541,26 @@ def call_Middle_Reasoner_with_Source_Judgment(image_analysis_result, context, po
             })
         prompt = prompt + "The following is the provided reasoning logic (plan) and the information list searched by an information search agent group:"+ (str(context) if context else '') + ". The following is the image analysis result provided by an image analysis agent group. " +str(image_analysis_result)
 
+    # Ablation/comparison switch: attach the raw post image (base64) so the
+    # final reasoning step sees the image itself, not just a textual image
+    # analysis summary. Used to run close_book/open_book in a T+I / T+I+E
+    # equivalent setting (see baseline_lvlms/ terminology).
+    if with_image:
+        image = post.get('post_image')
+        if image:
+            try:
+                code_image = image_to_code(image)
+                content.append(
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{code_image}"
+                        }
+                    }
+                )
+            except Exception:
+                print(f"the image in the path {image} is not correctly open or encoded")
+
     # 构建多个agents的对话信息
     results, total_tokens =  llm_process(content)
     return results, total_tokens
@@ -555,7 +575,7 @@ def call_Middle_Reasoner_with_Source_Judgment(image_analysis_result, context, po
 # 生成）。产出最终结构化结果：真伪标签（2分类和3分类）、推理摘要、引用
 # 证据ID的关键推理点、置信度分数。
 # ---------------------------------------------------------------------
-def call_Explainer_3_class_aligned(img_evi_analysis, context, content_reasoning, post):
+def call_Explainer_3_class_aligned(img_evi_analysis, context, content_reasoning, post, with_image=False):
     print("*Step* Explainer")
     prompt_role = "You are a Fact-Checking Result Explainer for a fact-checking framework."
     prompt_task="""
@@ -660,6 +680,23 @@ Now, begin your reasoning for the next claim."""
             })
         prompt = prompt + "Here is the reasoning process based on current evidence and image analysis result"+ str(content_reasoning)
 
+    # Ablation/comparison switch: attach the raw post image (base64), see
+    # call_Middle_Reasoner_with_Source_Judgment for rationale.
+    if with_image:
+        image = post.get('post_image')
+        if image:
+            try:
+                code_image = image_to_code(image)
+                content.append(
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{code_image}"
+                        }
+                    }
+                )
+            except Exception:
+                print(f"the image in the path {image} is not correctly open or encoded")
 
     # 构建多个agents的对话信息
     results, total_tokens =  llm_process(content)

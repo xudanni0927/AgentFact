@@ -28,6 +28,14 @@ parser.add_argument("--start_id", type=int, required=False, default=0, help="Sta
 parser.add_argument("--end_id", type=int, required=False, default=-1, help="Ending index for batch processing")
 parser.add_argument("--input_file", type=str, required=False, default="RW_Post_dataset/demo/demo.jsonl", help="the path to input jsonl")
 parser.add_argument("--dataset", type=str, required=False, default="rwpost", help="the name of input dataset")
+parser.add_argument("--search_mode", type=str, required=False, default="open_book",
+                     choices=["open_web", "close_book", "open_book"], help="retrieval mode")
+parser.add_argument("--with_image", action="store_true",
+                     help="Attach the raw post image (base64) to the final reasoning "
+                          "and explanation agent calls. Lets close_book/open_book be "
+                          "run as a T+I / T+I+E equivalent (see baseline_lvlms/ "
+                          "terminology) instead of their default T / T+E, since those "
+                          "modes don't otherwise send the image to any LLM call.")
 args = parser.parse_args()
 start_id = args.start_id
 end_id = args.end_id
@@ -45,10 +53,11 @@ image_evidence_use_flag = False
 
 
 mode_name="dev"
-search_mode = "open_book"  # "open_web" or "close_book" or "open_book"
+search_mode = args.search_mode  # "open_web" or "close_book" or "open_book"
+with_image = args.with_image
 
 sample_batch = start_id
-output_dir = f'output/{dataset}/{mode_name}/{search_mode}/{str(sample_batch)}/{model_version}/'
+output_dir = f'output/{dataset}/{mode_name}/{search_mode}{"_with_image" if with_image else ""}/{str(sample_batch)}/{model_version}/'
 os.makedirs(output_dir, exist_ok=True)
 output_jsonl=output_dir+f'output.jsonl'
 #用于标注执行模式的标记
@@ -859,7 +868,8 @@ def main():
             content_reasoning, total_tokens = call_Middle_Reasoner_with_Source_Judgment(
                 image_Analysis_item,
                 context_final_reasoner,
-                post
+                post,
+                with_image=with_image
             )
 
             tokens_amount_sum += total_tokens
@@ -879,14 +889,16 @@ def main():
                         image_Analysis_item,
                         {'information list': context_final_reasoner['information list']},
                         sim_validation_result,
-                        post
+                        post,
+                        with_image=with_image
                     )
                 except Exception:
                     content, total_tokens = call_Explainer_3_class_aligned(
                         image_Analysis_item,
                         {'information list': context_final_reasoner['information list']},
                         sim_validation_result,
-                        post
+                        post,
+                        with_image=with_image
                     )
 
                 tokens_amount_sum += total_tokens

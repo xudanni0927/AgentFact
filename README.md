@@ -11,8 +11,21 @@ Published at the IEEE/CVF Conference on Computer Vision and Pattern Recognition 
 A multi-agent, LLM-based framework for multimodal misinformation fact-checking. Given a social media post (text + image) and its claim, AgentFact plans a verification strategy, gathers text/image evidence, judges source credibility, and produces an explainable veracity verdict with evidence-ID citations.
 
 ## 📢 Updates
+### Baseline LVLM Comparison Framework Released (2026.10.1)
 
-### RW_Post Dataset Released
+[`baseline_lvlms/`](baseline_lvlms/) adds a model-agnostic batch-evaluation framework for comparing off-the-shelf LVLMs (GPT-4o-mini, Gemini-3-Flash, Qwen3-VL, InternVL3.5, Qwen2-VL, LLaVA-1.5) against AgentFact under four controlled input settings:
+
+- **Closed-book** (`T`, `T+I`): the model answers from the claim/post text alone, or with the post image added — no external evidence, isolating what the model already knows plus what it can read off the image.
+- **Evidence-bounded** (open-book) (`T+E`, `T+I+E`): the model is additionally given the same ground-truth fact-checking evidence snippets AgentFact uses, to evaluate how well a model reasons from supplied evidence rather than open-world retrieval.
+
+See [baseline_lvlms/README.md](baseline_lvlms/README.md) for setup, how to add a new model backend, and how to reproduce these comparisons.
+
+
+### Code Released
+
+The AgentFact pipeline code (open-web input setting) is now available — see below for the code structure and how to run it.
+
+### RW_Post Dataset Released 
 
 The RW_Post dataset has been uploaded. The non-image portion (claims, post text, evidence, labels) is included in this repo under `RW_Post_dataset/`. A small self-contained demo sample with images also ships under `RW_Post_dataset/demo/` so you can smoke-test the pipeline right away.
 
@@ -25,10 +38,6 @@ The complete dataset, including post images, is available on:
 By accessing or using this dataset, you agree to comply with the terms described in [DATA_LICENSE.md](DATA_LICENSE.md).
 
 Please refer to [dataset_instruction.md](dataset_instruction.md) for the data schema and recommended evaluation settings (closed-book / evidence-bounded / open-web).
-
-### Code Released
-
-The AgentFact pipeline code is now available — see below for the code structure and how to run it.
 
 ## Agents
 
