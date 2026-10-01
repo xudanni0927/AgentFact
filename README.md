@@ -127,17 +127,27 @@ If you use the Google Vision-based image search, place your GCP service account 
 
 ## Search modes
 
-`main_workflow.py` supports three modes, set via the `search_mode` variable near the top of the file (not currently exposed as a CLI flag):
+`main_workflow.py` supports three modes, set via `--search_mode`:
 
 | Mode | Behavior |
 |---|---|
-| `"open_book"` (default) | Uses the claim's ground-truth `retrieved_evidence` field directly, with no live retrieval. Fastest/cheapest; useful for evaluating the reasoning/explanation agents in isolation. |
-| `"close_book"` | No evidence at all — the model reasons purely from the claim and post content. |
-| `"open_web"` | Full iterative retrieve-reason loop: generates search queries, retrieves web evidence via Serper, does reverse image search via Google Vision, and reasons over the results across multiple rounds (up to 10 steps) until confident. This is the mode described in the paper's Workflow section. |
+| `open_book` (default) | Uses the claim's ground-truth `retrieved_evidence` field directly, with no live retrieval. Fastest/cheapest; useful for evaluating the reasoning/explanation agents in isolation. |
+| `close_book` | No evidence at all — the model reasons purely from the claim and post content. |
+| `open_web` | Full iterative retrieve-reason loop: generates search queries, retrieves web evidence via Serper, does reverse image search via Google Vision, and reasons over the results across multiple rounds (up to 10 steps) until confident. This is the mode described in the paper's Workflow section. |
 
-To switch modes, edit:
-```python
-search_mode = "open_book"  # "open_web" or "close_book" or "open_book"
+```bash
+python main_workflow.py --search_mode open_web
+```
+
+`close_book` and `open_book` don't otherwise send the post image to any LLM
+call (only `open_web`'s dedicated image-analysis agents do), so they're
+effectively `T` / `T+E` in `baseline_lvlms/`'s terminology. Pass
+`--with_image` to additionally attach the raw image (base64) to the final
+reasoning/explanation calls, running them as the `T+I` / `T+I+E`
+equivalent instead:
+```bash
+python main_workflow.py --search_mode close_book --with_image   # T+I
+python main_workflow.py --search_mode open_book --with_image    # T+I+E
 ```
 
 ## Running the demo
@@ -154,6 +164,8 @@ CLI arguments:
 |---|---|---|
 | `--input_file` | `RW_Post_dataset/demo/demo.jsonl` | Path to a ground-truth JSONL file |
 | `--dataset` | `rwpost` | Dataset name tag, used only for the output path |
+| `--search_mode` | `open_book` | `open_book`, `close_book`, or `open_web` — see [Search modes](#search-modes) |
+| `--with_image` | off | Also send the raw post image to the final reasoning/explanation calls (see [Search modes](#search-modes)) |
 | `--start_id` | `0` | Index of the first claim to process |
 | `--end_id` | `-1` | Index to stop before (`-1` = process all remaining claims) |
 
