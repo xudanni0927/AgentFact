@@ -16,7 +16,10 @@ import re
 import json
 import argparse
 import copy
-# from DIRE.demo_rewrite import predict_synthetic_probability
+try:
+    from DIRE.demo_rewrite import predict_synthetic_probability
+except ImportError:
+    predict_synthetic_probability = None
 from retrieval_imagehash_with_google_vision import get_evidence, visual_search
 from dataload import  extract_data_from_GT_jsonl
 from agent_model import  call_Strategy_generator, call_Query_Site_generator, call_Middle_Reasoner, call_image_similarity_type_and_manipulation_judger, call_image_miscaption_detector, call_evidence_source_with_link_judger_detailed, call_Middle_Reasoner_with_Source_Judgment, call_Explainer_3_class_aligned
@@ -28,14 +31,22 @@ parser.add_argument("--start_id", type=int, required=False, default=0, help="Sta
 parser.add_argument("--end_id", type=int, required=False, default=-1, help="Ending index for batch processing")
 parser.add_argument("--input_file", type=str, required=False, default="RW_Post_dataset/demo/demo.jsonl", help="the path to input jsonl")
 parser.add_argument("--dataset", type=str, required=False, default="rwpost", help="the name of input dataset")
-parser.add_argument("--search_mode", type=str, required=False, default="open_book",
+parser.add_argument("--search_mode", type=str, required=True,
                      choices=["open_web", "close_book", "open_book"], help="retrieval mode")
 parser.add_argument("--with_image", action="store_true",
-                     help="Attach the raw post image (base64) to the final reasoning "
-                          "and explanation agent calls. Lets close_book/open_book be "
-                          "run as a T+I / T+I+E equivalent (see baseline_lvlms/ "
-                          "terminology) instead of their default T / T+E, since those "
-                          "modes don't otherwise send the image to any LLM call.")
+                     help="Turn on the image module. For close_book/open_book (which "
+                          "otherwise never send any image signal to an LLM call), this "
+                          "runs the DIRE deepfake/synthetic-image detector on the post "
+                          "image and feeds its synthetic_probability score into "
+                          "reasoning as text (T+I / T+I+E equivalent, see "
+                          "baseline_lvlms/ terminology). For open_web, this turns on "
+                          "the existing image-analysis agents (tampering/miscaption "
+                          "judgment) plus DIRE.")
+parser.add_argument("--with_deepfake", action="store_true",
+                     help="Run the DIRE deepfake/synthetic-image detector on the post "
+                          "image and feed its synthetic_probability score (text) into "
+                          "the final reasoning call. Retrieval-free, unlike the other "
+                          "Agent-IR sub-agents. Implied by --with_image.")
 args = parser.parse_args()
 start_id = args.start_id
 end_id = args.end_id
@@ -55,9 +66,14 @@ image_evidence_use_flag = False
 mode_name="dev"
 search_mode = args.search_mode  # "open_web" or "close_book" or "open_book"
 with_image = args.with_image
+with_deepfake = args.with_deepfake or with_image
 
 sample_batch = start_id
-output_dir = f'output/{dataset}/{mode_name}/{search_mode}{"_with_image" if with_image else ""}/{str(sample_batch)}/{model_version}/'
+_image_tags = []
+if args.with_image: _image_tags.append("with_image")
+if args.with_deepfake: _image_tags.append("with_deepfake")
+_image_suffix = ("_" + "_".join(_image_tags)) if _image_tags else ""
+output_dir = f'output/{dataset}/{mode_name}/{search_mode}{_image_suffix}/{str(sample_batch)}/{model_version}/'
 os.makedirs(output_dir, exist_ok=True)
 output_jsonl=output_dir+f'output.jsonl'
 #用于标注执行模式的标记
@@ -183,7 +199,7 @@ def main():
             # ----------------------------
             image_Analysis_item = []
             
-            if search_mode == "open_web" and post_imgs:
+            if search_mode == "open_web" and post_imgs and with_image:
                 image_search_results = []
                 try:
                     image_search_results = visual_search(
@@ -324,6 +340,31 @@ def main():
 
                         evidence_upgraded.append(evidence_item)
                         evidence_i += 1
+
+                # ----------------------------------------
+                # DIRE deepfake/synthetic-image detection. Unlike the two
+                # agents above, this only needs the post image itself (no
+                # retrieved reference image/article), so it runs once per
+                # claim rather than once per retrieved candidate.
+                # ----------------------------------------
+                if with_deepfake and post_imgs:
+                    try:
+                        synthetic_prob = predict_synthetic_probability(post_imgs)[0]
+                        print(f"DIRE synthetic_probability for {post_imgs}: {synthetic_prob}")
+                        evidence_upgraded.append({
+                            f"evidence_{evidence_i}": {
+                                "deepfake_detection_result": {
+                                    "method": "DIRE (diffusion reconstruction error)",
+                                    "synthetic_probability": float(f"{synthetic_prob:.4g}"),
+                                    "note": "Probability the post image was generated/manipulated "
+                                            "by a diffusion model, based on reconstruction-error "
+                                            "analysis of the image itself. No web search involved."
+                                }
+                            }
+                        })
+                        evidence_i += 1
+                    except Exception as e:
+                        print(f"DIRE analysis failed for {post_imgs}: {e}")
 
                 # ----------------------------------------
                 # Preserve image analysis results
@@ -820,6 +861,31 @@ def main():
                     context_record["information list"] = []
                     stop = True  # In close-book mode, reasoning is done in one step without iterative search
 
+                # Experimental: close_book/open_book have no retrieval, so the
+                # tampering/miscaption Agent-IR sub-agents (which compare the
+                # post image against a *retrieved* reference image/article)
+                # have nothing to compare against and can't run. DIRE is the
+                # one Agent-IR sub-signal that only needs the image itself, so
+                # it's the only retrieval-free way to give these modes a real
+                # image signal instead of just dumping the raw image in.
+                if search_mode != "open_web" and with_deepfake and post_imgs:
+                    try:
+                        synthetic_prob = predict_synthetic_probability(post_imgs)[0]
+                        print(f"DIRE synthetic_probability for {post_imgs}: {synthetic_prob}")
+                        image_Analysis_item = [{
+                            "evidence_0": {
+                                "deepfake_detection_result": {
+                                    "method": "DIRE (diffusion reconstruction error)",
+                                    "synthetic_probability": float(f"{synthetic_prob:.4g}"),
+                                    "note": "Probability the post image was generated/manipulated "
+                                            "by a diffusion model, based on reconstruction-error "
+                                            "analysis of the image itself. No web search involved."
+                                }
+                            }
+                        }]
+                    except Exception as e:
+                        print(f"DIRE analysis failed for {post_imgs}: {e}")
+
             # ==================================================
             # Final cleanup after all search and reasoning steps
             # ==================================================
@@ -868,8 +934,7 @@ def main():
             content_reasoning, total_tokens = call_Middle_Reasoner_with_Source_Judgment(
                 image_Analysis_item,
                 context_final_reasoner,
-                post,
-                with_image=with_image
+                post
             )
 
             tokens_amount_sum += total_tokens
@@ -889,16 +954,14 @@ def main():
                         image_Analysis_item,
                         {'information list': context_final_reasoner['information list']},
                         sim_validation_result,
-                        post,
-                        with_image=with_image
+                        post
                     )
                 except Exception:
                     content, total_tokens = call_Explainer_3_class_aligned(
                         image_Analysis_item,
                         {'information list': context_final_reasoner['information list']},
                         sim_validation_result,
-                        post,
-                        with_image=with_image
+                        post
                     )
 
                 tokens_amount_sum += total_tokens

@@ -11,7 +11,7 @@ Published at the IEEE/CVF Conference on Computer Vision and Pattern Recognition 
 A multi-agent, LLM-based framework for multimodal misinformation fact-checking. Given a social media post (text + image) and its claim, AgentFact plans a verification strategy, gathers text/image evidence, judges source credibility, and produces an explainable veracity verdict with evidence-ID citations.
 
 ## 📢 Updates
-### Baseline LVLM Comparison Framework Released (2026.10.1)
+### Baseline LVLM Comparison Framework Released (Oct 2026)
 
 [`baseline_lvlms/`](baseline_lvlms/) adds a model-agnostic batch-evaluation framework for comparing off-the-shelf LVLMs (GPT-4o-mini, Gemini-3-Flash, Qwen3-VL, InternVL3.5, Qwen2-VL, LLaVA-1.5) against AgentFact under four controlled input settings:
 
@@ -21,11 +21,11 @@ A multi-agent, LLM-based framework for multimodal misinformation fact-checking. 
 See [baseline_lvlms/README.md](baseline_lvlms/README.md) for setup, how to add a new model backend, and how to reproduce these comparisons.
 
 
-### Code Released
+### Code Released (Sep 2026)
 
 The AgentFact pipeline code (open-web input setting) is now available — see below for the code structure and how to run it.
 
-### RW_Post Dataset Released 
+### RW_Post Dataset Released (May 2026)
 
 The RW_Post dataset has been uploaded. The non-image portion (claims, post text, evidence, labels) is included in this repo under `RW_Post_dataset/`. A small self-contained demo sample with images also ships under `RW_Post_dataset/demo/` so you can smoke-test the pipeline right away.
 
@@ -121,9 +121,9 @@ The pipeline needs an OpenAI key and a web-search backend key. Two independent c
 
 Both `.env` and `config/api_keys.yaml` are gitignored — never commit real keys.
 
-### Reverse image search (optional)
+### Reverse image search key
 
-If you use the Google Vision-based image search, place your GCP service account credentials at `config/google_service_account_key.json` (also gitignored), and make sure both **billing** and the **[Cloud Vision API](https://console.cloud.google.com/apis/library/vision.googleapis.com)** are enabled on that GCP project. See Google's [Vision API setup guide](https://cloud.google.com/vision/docs/setup) for creating a project, enabling billing, and generating a service account key.
+Needed when running `--search_mode open_web --with_image`. Place your GCP service account credentials at `config/google_service_account_key.json` (also gitignored), and make sure both **billing** and the **[Cloud Vision API](https://console.cloud.google.com/apis/library/vision.googleapis.com)** are enabled on that GCP project. See Google's [Vision API setup guide](https://cloud.google.com/vision/docs/setup) for creating a project, enabling billing, and generating a service account key.
 
 ## Search modes
 
@@ -131,32 +131,45 @@ If you use the Google Vision-based image search, place your GCP service account 
 
 | Mode | Behavior |
 |---|---|
-| `open_book` (default) | Uses the claim's ground-truth `retrieved_evidence` field directly, with no live retrieval. Fastest/cheapest; useful for evaluating the reasoning/explanation agents in isolation. |
+| `open_book` | Uses the claim's ground-truth `retrieved_evidence` field directly, with no live retrieval. useful for evaluating the reasoning/explanation agents in isolation. |
 | `close_book` | No evidence at all — the model reasons purely from the claim and post content. |
-| `open_web` | Full iterative retrieve-reason loop: generates search queries, retrieves web evidence via Serper, does reverse image search via Google Vision, and reasons over the results across multiple rounds (up to 10 steps) until confident. This is the mode described in the paper's Workflow section. |
+| `open_web` | Full iterative retrieve-reason loop: generates search queries, retrieves web evidence via Serper, does reverse image search via Google Vision, and reasons over the results across multiple rounds until confident. This is the mode described in the paper's Workflow section. |
 
-```bash
+<!-- ```bash
 python main_workflow.py --search_mode open_web
-```
+python main_workflow.py --search_mode close_book
+python main_workflow.py --search_mode open_book
+``` -->
+<!-- 
+By default the image module is off — in `close_book`/`open_book` its
+contribution isn't clearly effective. But if you need it, pass
+`--with_image` to turn it on (`T+I` / `T+I+E` equivalent for
+`close_book`/`open_book`):
 
-`close_book` and `open_book` don't otherwise send the post image to any LLM
-call (only `open_web`'s dedicated image-analysis agents do), so they're
-effectively `T` / `T+E` in `baseline_lvlms/`'s terminology. Pass
-`--with_image` to additionally attach the raw image (base64) to the final
-reasoning/explanation calls, running them as the `T+I` / `T+I+E`
-equivalent instead:
 ```bash
-python main_workflow.py --search_mode close_book --with_image   # T+I
-python main_workflow.py --search_mode open_book --with_image    # T+I+E
-```
+# T+I equivalent
+python main_workflow.py --search_mode close_book --with_image
+# T+I+E equivalent
+python main_workflow.py --search_mode open_book --with_image
+# open_web with the image module on (no T/I/E equivalent — open_web does
+# live retrieval, outside that framework)
+python main_workflow.py --search_mode open_web --with_image
+``` -->
 
 ## Running the demo
 
 A small self-contained sample (5 labeled posts + images) ships in `RW_Post_dataset/demo/demo.jsonl` so you can smoke-test the pipeline without downloading the full dataset:
 
 ```bash
-python main_workflow.py --input_file RW_Post_dataset/demo/demo.jsonl --dataset rwpost
+python main_workflow.py --input_file RW_Post_dataset/demo/demo.jsonl --dataset rwpost --search_mode open_web --with_image
+python main_workflow.py --input_file RW_Post_dataset/demo/demo.jsonl --dataset rwpost --search_mode open_book
+python main_workflow.py --input_file RW_Post_dataset/demo/demo.jsonl --dataset rwpost --search_mode close_book
 ```
+
+By default the image module is off — in `close_book`/`open_book` because its
+contribution isn't clearly effective. But if you need it, pass
+`--with_image` to turn it on (`T+I` / `T+I+E` equivalent for
+`close_book`/`open_book`)
 
 CLI arguments:
 
@@ -164,8 +177,8 @@ CLI arguments:
 |---|---|---|
 | `--input_file` | `RW_Post_dataset/demo/demo.jsonl` | Path to a ground-truth JSONL file |
 | `--dataset` | `rwpost` | Dataset name tag, used only for the output path |
-| `--search_mode` | `open_book` | `open_book`, `close_book`, or `open_web` — see [Search modes](#search-modes) |
-| `--with_image` | off | Also send the raw post image to the final reasoning/explanation calls (see [Search modes](#search-modes)) |
+| `--search_mode` | *required* | `open_book`, `close_book`, or `open_web` — see [Search modes](#search-modes) |
+| `--with_image` | off | Turn on the visual module (see [Search modes](#search-modes)) |
 | `--start_id` | `0` | Index of the first claim to process |
 | `--end_id` | `-1` | Index to stop before (`-1` = process all remaining claims) |
 
